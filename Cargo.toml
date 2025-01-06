@@ -1,0 +1,15 @@
+[package]
+name = "gm_addr_extract"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.95"
+disarm64 = "0.1.21"
+elf = "0.7.4"
+itertools = "0.14.0"
+
+[profile.release]
+lto = "thin"
+strip = "true"
+panic = "abort"
