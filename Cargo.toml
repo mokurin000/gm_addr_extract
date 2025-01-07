@@ -5,11 +5,12 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.95"
+argh = "0.1.13"
 disarm64 = { git = "https://github.com/mokurin000/disarm64.git", version = "0.1.21" }
 elf = "0.7.4"
 itertools = "0.14.0"
 
 [profile.release]
 lto = "thin"
-strip = "true"
 panic = "abort"
+strip = true
