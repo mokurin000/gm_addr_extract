@@ -11,28 +11,25 @@ use itertools::Itertools;
 
 pub fn extract_gm_addr(elf_bytes: impl Seek + Read) -> anyhow::Result<u64> {
     let mut lib = ElfStream::<LittleEndian, _>::open_stream(elf_bytes)?;
-    let text_section = lib
+    let text_section = *lib
         .section_header_by_name(".text")?
-        .ok_or_else(|| anyhow!(".text not found"))?
-        .clone();
+        .ok_or_else(|| anyhow!(".text not found"))?;
     let text_addr = text_section.sh_offset as usize;
 
     let text_section_bytes = lib.section_data(&text_section)?.0;
 
     let (idx, (p0, s0)) = text_section_bytes
         .chunks(4)
-        .map(<[u8; 4]>::try_from)
-        .flatten()
+        .flat_map(<[u8; 4]>::try_from)
         .map(u32::from_le_bytes)
-        .map(decoder_full::decode)
-        .flatten()
+        .filter_map(decoder_full::decode)
         .tuple_windows::<(_, _, _, _)>()
         .enumerate()
         .filter(|(_idx, (o0, o1, o2, o3))| {
-            match (o0.mnemonic, o1.mnemonic, o2.mnemonic, o3.mnemonic) {
-                (Mnemonic::adrp, Mnemonic::adrp, Mnemonic::str, Mnemonic::str) => true,
-                _ => false,
-            }
+            matches!(
+                (o0.mnemonic, o1.mnemonic, o2.mnemonic, o3.mnemonic),
+                (Mnemonic::adrp, Mnemonic::adrp, Mnemonic::str, Mnemonic::str)
+            )
         })
         .filter_map(|(idx, (o0, o1, s0, s1))| {
             let (
@@ -84,9 +81,9 @@ pub fn extract_gm_addr(elf_bytes: impl Seek + Read) -> anyhow::Result<u64> {
                  p_offset,
                  p_filesz,
                  ..
-             }| { (*p_offset..p_offset + p_filesz).contains(&&elf_file_off) },
+             }| { (*p_offset..p_offset + p_filesz).contains(&elf_file_off) },
         )
         .ok_or_else(|| anyhow!("failed to find corrosponding segment!"))?;
     let addr = p_addr + offset + elf_file_off + p_vaddr;
-    return Ok(addr);
+    Ok(addr)
 }
