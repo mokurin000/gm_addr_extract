@@ -1,21 +1,23 @@
+use std::io::{Read, Seek};
+
 use anyhow::anyhow;
 
 use disarm64::{
     decoder::{LDST_POS, Mnemonic, Operation, PCRELADDR},
     decoder_full,
 };
-use elf::{ElfBytes, endian::LittleEndian};
+use elf::{ElfStream, endian::LittleEndian};
 use itertools::Itertools;
 
-pub fn extract_gm_addr(elf_bytes: &[u8]) -> anyhow::Result<u64> {
-    let lib = ElfBytes::<LittleEndian>::minimal_parse(&elf_bytes)?;
+pub fn extract_gm_addr(elf_bytes: impl Seek + Read) -> anyhow::Result<u64> {
+    let mut lib = ElfStream::<LittleEndian, _>::open_stream(elf_bytes)?;
     let text_section = lib
         .section_header_by_name(".text")?
-        .ok_or_else(|| anyhow!(".text not found"))?;
+        .ok_or_else(|| anyhow!(".text not found"))?
+        .clone();
     let text_addr = text_section.sh_offset as usize;
-    let text_addr_end = text_section.sh_size as usize + text_addr;
 
-    let text_section_bytes = &elf_bytes[text_addr..text_addr_end];
+    let text_section_bytes = lib.section_data(&text_section)?.0;
 
     for (idx, (p0, s0)) in text_section_bytes
         .chunks(4)
