@@ -16,7 +16,7 @@ fn main() -> Result<()> {
         .open(il2cpp_so_path)?;
 
     let gm_addr = extract_gm_addr(lib_data)?;
-    println!("0x{gm_addr:x}");
+    println!("0x{gm_addr:X}");
 
     Ok(())
 }

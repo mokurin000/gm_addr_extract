@@ -6,7 +6,7 @@ use disarm64::{
     decoder::{LDST_POS, Mnemonic, Operation, PCRELADDR},
     decoder_full,
 };
-use elf::{ElfStream, endian::LittleEndian};
+use elf::{ElfStream, endian::LittleEndian, segment::ProgramHeader};
 use itertools::Itertools;
 
 pub fn extract_gm_addr(elf_bytes: impl Seek + Read) -> anyhow::Result<u64> {
@@ -19,7 +19,7 @@ pub fn extract_gm_addr(elf_bytes: impl Seek + Read) -> anyhow::Result<u64> {
 
     let text_section_bytes = lib.section_data(&text_section)?.0;
 
-    for (idx, (p0, s0)) in text_section_bytes
+    let (idx, (p0, s0)) = text_section_bytes
         .chunks(4)
         .map(<[u8; 4]>::try_from)
         .flatten()
@@ -68,13 +68,25 @@ pub fn extract_gm_addr(elf_bytes: impl Seek + Read) -> anyhow::Result<u64> {
 
             Some((idx, (p0, s0)))
         })
-    {
-        let p_addr = (((p0.immhi() as u64) << 2) | p0.immlo() as u64) << 12;
-        let offset = (s0.imm12() * 8) as u64;
-        let pc_off = ((text_addr + idx * 4) >> 12 << 12) as u64;
-        let addr = p_addr + offset + pc_off;
-        return Ok(addr);
-    }
+        .next()
+        .ok_or_else(|| anyhow!("failed to find"))?;
 
-    anyhow::bail!("addr not found")
+    let p_addr = (((p0.immhi() as u64) << 2) | p0.immlo() as u64) << 12;
+    let offset = (s0.imm12() * 8) as u64;
+    let elf_file_off = ((text_addr + idx * 4) >> 12 << 12) as u64;
+
+    let ProgramHeader { p_vaddr, .. } = lib
+        .segments()
+        .iter()
+        .find(
+            |ProgramHeader {
+                 // for .text segments, assume filesz == memsz
+                 p_offset,
+                 p_filesz,
+                 ..
+             }| { (*p_offset..p_offset + p_filesz).contains(&&elf_file_off) },
+        )
+        .ok_or_else(|| anyhow!("failed to find corrosponding segment!"))?;
+    let addr = p_addr + offset + elf_file_off + p_vaddr;
+    return Ok(addr);
 }
