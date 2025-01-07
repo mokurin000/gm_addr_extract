@@ -2,7 +2,10 @@ use std::fs;
 
 use anyhow::Result;
 use arg::Args;
-use gm_addr_extract::extract_gm_addr;
+use gm_addr_extract::{
+    extract_gm_addr,
+    patterns::{AdrpAdrpStrStr, AdrpLdrAdrpLdr},
+};
 
 mod arg;
 
@@ -15,8 +18,16 @@ fn main() -> Result<()> {
         .append(false)
         .open(il2cpp_so_path)?;
 
-    let gm_addr = extract_gm_addr(lib_data)?;
-    println!("0x{gm_addr:X}");
+    if let Ok(gm_addr_mode1) = extract_gm_addr(&lib_data, AdrpAdrpStrStr) {
+        println!("0x{gm_addr_mode1:X}");
+        return Ok(());
+    }
+
+    eprintln!("Mode 1 failed. falling back to mode 2...");
+
+    if let Ok(gm_addr_mode2) = extract_gm_addr(lib_data, AdrpLdrAdrpLdr) {
+        println!("0x{gm_addr_mode2:X}");
+    }
 
     Ok(())
 }

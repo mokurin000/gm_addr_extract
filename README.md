@@ -24,3 +24,4 @@ Benchmark 1: gm_addr_extract.exe data/com.PigeonGames.Phigros/lib/libil2cpp.so
 ## Tested
 
 - Phigros
+- Among Us
