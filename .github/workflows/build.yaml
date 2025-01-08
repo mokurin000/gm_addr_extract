@@ -21,12 +21,12 @@ jobs:
         include:
           - platform: macos-x86_64
             target: x86_64-apple-darwin
-            os: macos-latest-large
+            os: macos-latest
             bin: gm_addr_extract
             
           - platform: macos-arm64
             target: aarch64-apple-darwin
-            os: macos-latest-large
+            os: macos-latest
             bin: gm_addr_extract
 
           - platform: linux-x86_64
