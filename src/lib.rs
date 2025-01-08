@@ -26,9 +26,9 @@ pub fn extract_gm_addr(
 
     let (pc_relative_addr, idx) = pat.try_find_pc_relative_addr(insns)?;
 
-    let elf_file_off = ((text_addr + idx * 4) >> 12 << 12) as u64;
+    let pc_off_from_0 = (text_addr + idx * 4) as u64;
 
-    let ProgramHeader { p_vaddr, .. } = lib
+    let ProgramHeader { p_offset, .. } = lib
         .segments()
         .iter()
         .find(
@@ -37,9 +37,10 @@ pub fn extract_gm_addr(
                  p_offset,
                  p_filesz,
                  ..
-             }| { (*p_offset..p_offset + p_filesz).contains(&elf_file_off) },
+             }| { (*p_offset..p_offset + p_filesz).contains(&pc_off_from_0) },
         )
         .ok_or_else(|| anyhow!("failed to find corrosponding segment!"))?;
-    let base_relative_addr = pc_relative_addr + elf_file_off + p_vaddr;
+    let pc = (pc_off_from_0 - p_offset) >> 12 << 12;
+    let base_relative_addr = pc_relative_addr + pc;
     Ok(base_relative_addr)
 }
