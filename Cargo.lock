@@ -106,6 +106,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "gm-addr-extract-ffi"
+version = "0.1.0"
+dependencies = [
+ "gm-addr-extract-lib",
+]
+
+[[package]]
 name = "gm-addr-extract-lib"
 version = "0.1.0"
 dependencies = [

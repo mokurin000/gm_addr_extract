@@ -15,6 +15,14 @@ Benchmark 1: gm-addr-extract.exe data/com.PigeonGames.Phigros/lib/libil2cpp.so
   Range (min … max):    16.9 ms …  24.9 ms    116 runs
 ```
 
+## Targetting Android
+
+For example, to build `gm-addr-extract-ffi` for android using NDK from environment:
+
+```bash
+cargo ndk -t arm64-v8a build --release --package gm-addr-extract-ffi
+```
+
 ## Limitatin
 
 - `libil2cpp.so` must be unencrypted.

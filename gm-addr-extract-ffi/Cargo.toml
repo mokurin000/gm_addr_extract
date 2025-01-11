@@ -1,0 +1,10 @@
+[package]
+name = "gm-addr-extract-ffi"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gm-addr-extract-lib = { path = "../gm-addr-extract-lib" }
+
+[lib]
+crate-type = ["cdylib", "staticlib"]

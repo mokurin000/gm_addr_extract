@@ -1,0 +1,6 @@
+language = "C"
+style = "both"
+
+pragma_once = true
+cpp_compat = true
+include_version = true

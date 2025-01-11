@@ -1,5 +1,5 @@
 [workspace]
-members = ["gm-addr-extract-lib", "gm-addr-extract"]
+members = ["gm-addr-extract-lib", "gm-addr-extract", "gm-addr-extract-ffi"]
 default-members = ["gm-addr-extract"]
 resolver = "2"
 
