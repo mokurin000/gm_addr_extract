@@ -97,11 +97,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4445909572dbd556c457c849c4ca58623d84b27c8fff1e74b0b4227d8b90d17b"
 
 [[package]]
-name = "gm_addr_extract"
+name = "gm-addr-extract"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "argh",
+ "gm-addr-extract-lib",
+]
+
+[[package]]
+name = "gm-addr-extract-lib"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
  "disarm64",
  "elf",
  "itertools",

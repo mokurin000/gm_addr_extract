@@ -22,37 +22,37 @@ jobs:
           - platform: macos-x86_64
             target: x86_64-apple-darwin
             os: macos-latest
-            bin: gm_addr_extract
+            bin: gm-addr-extract
             
           - platform: macos-arm64
             target: aarch64-apple-darwin
             os: macos-latest
-            bin: gm_addr_extract
+            bin: gm-addr-extract
 
           - platform: linux-x86_64
             target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            bin: gm_addr_extract
+            bin: gm-addr-extract
             
           - platform: linux-arm64
             target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-            bin: gm_addr_extract
+            bin: gm-addr-extract
 
           - platform: linux-riscv64
             target: riscv64gc-unknown-linux-gnu
             os: ubuntu-latest
-            bin: gm_addr_extract
+            bin: gm-addr-extract
 
           - platform: windows-x86_64
             target: x86_64-pc-windows-msvc
             os: windows-latest
-            bin: gm_addr_extract.exe
+            bin: gm-addr-extract.exe
             
           - platform: windows-arm64
             target: aarch64-pc-windows-msvc
             os: windows-latest
-            bin: gm_addr_extract.exe
+            bin: gm-addr-extract.exe
             
     steps:
       - name: Checkout code
@@ -70,7 +70,7 @@ jobs:
         with:
           toolchain: nightly
           target: ${{ matrix.target }}
-          args: "--locked --release --bin gm_addr_extract"
+          args: "--locked --release --bin gm-addr-extract"
           strip: true
 
       - name: Prepare assets

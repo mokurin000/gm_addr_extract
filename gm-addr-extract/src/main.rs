@@ -2,7 +2,7 @@ use std::fs;
 
 use anyhow::Result;
 use arg::Args;
-use gm_addr_extract::{
+use gm_addr_extract_lib::{
     extract_gm_addr,
     patterns::{AdrpAdrpStrStr, AdrpLdrAdrpLdr},
 };
