@@ -31,5 +31,5 @@ cargo ndk -t arm64-v8a build --release --package gm-addr-extract-ffi
 
 ## Tested
 
-- Phigros
+- Phigros 1.6+ (versions below does not encrypt their global-metadata, the extraction will work too though)
 - Among Us
