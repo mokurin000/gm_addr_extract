@@ -4,7 +4,6 @@ Extract relative GlobalMetadata address for ARM64 ELF `libil2cpp.so`.
 
 On Windows 11 running on `i7-12700H` and `Predator SSD GM7000 2TB`, it could process in 20ms.
 
-
 ```bash
 hyperfine.exe --warmup 10 "gm-addr-extract.exe data/com.PigeonGames.Phigros/lib/libil2cpp.so"
 ```
@@ -20,7 +19,7 @@ Benchmark 1: gm-addr-extract.exe data/com.PigeonGames.Phigros/lib/libil2cpp.so
 For example, to build `gm-addr-extract-ffi` for android using NDK from environment:
 
 ```bash
-cargo ndk -t arm64-v8a build --release --package gm-addr-extract-ffi
+cargo ndk -t arm64-v8a build --release --package gm-addr-extract-ffi -Z build-std=panic_abort,std
 ```
 
 ## Limitatin
